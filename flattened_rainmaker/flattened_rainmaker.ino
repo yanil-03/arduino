@@ -1,3 +1,4 @@
+
 #include "RMaker.h"
 #include "WiFi.h"
 #include "WiFiProv.h"
@@ -24,8 +25,6 @@ static uint8_t RelayPin5 = 18;  //D18
 static uint8_t RelayPin6 = 5;   //D5
 static uint8_t RelayPin7 = 25;  //D25
 static uint8_t RelayPin8 = 26;  //D26
-
-
 
 static uint8_t wifiLed    = 2;   //D2
 static uint8_t gpio_reset = 0;
@@ -193,6 +192,7 @@ void setup()
     pinMode(RelayPin8, OUTPUT);  
     pinMode(wifiLed, OUTPUT);
     
+
     pinMode(gpio_reset, INPUT);
     
     // Write to the GPIOs the default state on booting
@@ -250,9 +250,9 @@ void setup()
 
     WiFi.onEvent(sysProvEvent);
 #if CONFIG_IDF_TARGET_ESP32
-    WiFiProv.beginProvision(WIFI_PROV_SCHEME_BLE, WIFI_PROV_SCHEME_HANDLER_FREE_BTDM, WIFI_PROV_SECURITY_1, pop, service_name);
+    WiFiProv.beginProvision(NETWORK_PROV_SCHEME_BLE, NETWORK_PROV_SCHEME_HANDLER_FREE_BTDM, NETWORK_PROV_SECURITY_1, pop, service_name);
 #else
-    WiFiProv.beginProvision(WIFI_PROV_SCHEME_SOFTAP, WIFI_PROV_SCHEME_HANDLER_NONE, WIFI_PROV_SECURITY_1, pop, service_name);
+    WiFiProv.beginProvision(NETWORK_PROV_SCHEME_SOFTAP, NETWORK_PROV_SCHEME_HANDLER_NONE, NETWORK_PROV_SECURITY_1, pop, service_name);
 #endif
 
     my_switch1.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
@@ -299,5 +299,5 @@ void loop()
       digitalWrite(wifiLed, true);
     }
 
-    
+
 }
