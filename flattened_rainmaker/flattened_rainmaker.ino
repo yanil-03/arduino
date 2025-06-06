@@ -3,6 +3,40 @@
 #include "WiFi.h"
 #include "WiFiProv.h"
 
+#include <FastLED.h>
+
+#define NUM_LEDS  16                      //total leds in athe strip
+#define LED_PIN   2                     //LED pin / gpio pin
+#define color CRGB::MistyRose//peru    // led color
+CRGB leds[NUM_LEDS];
+
+
+
+// LED functions
+void light(int n)
+{
+  leds[n] = color;
+  FastLED.show();
+}
+
+
+void lightoff(int n)
+{
+  leds[n] = CRGB::Black;
+  FastLED.show();
+}
+
+void grp(int a,int b,int c,int d)
+{
+  light(a);
+  light(b);
+  light(c);
+  light(d);
+}
+
+
+
+// painmeker code
 const char *service_name = "PROV_12345";
 const char *pop = "1234567";
 
@@ -177,6 +211,12 @@ void write_callback(Device *device, Param *param, const param_val_t val, void *p
 
 void setup()
 {
+
+
+    FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
+    FastLED.setBrightness(50);                                      //LED brightness
+    
+    
     uint32_t chipId = 0;
     
     Serial.begin(115200);
