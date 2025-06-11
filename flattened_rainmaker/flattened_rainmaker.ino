@@ -6,7 +6,7 @@
 #include <FastLED.h>
 
 #define NUM_LEDS  16                      //total leds in athe strip
-#define LED_PIN   2                     //LED pin / gpio pin
+#define LED_PIN   4                     //LED pin / gpio pin
 #define color CRGB::MistyRose//peru    // led color
 CRGB leds[NUM_LEDS];
 
