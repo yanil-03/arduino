@@ -75,7 +75,7 @@ void write_callback(Device *device, Param *param, const param_val_t val, void *p
       if(strcmp(param_name, "Power") == 0) {
           Serial.printf("Received value = %s for %s - %s\n", val.val.b? "true" : "false", device_name, param_name);
         toggleState_1 = val.val.b;
-        (toggleState_1 == false) ? digitalWrite(RelayPin1, HIGH) : digitalWrite(RelayPin1, LOW);
+        (toggleState_1 == false) ? digitalWrite(RelayPin1, HIGH) : digitalWrite(RelayPin1, start_warm_light());
         param->updateAndReport(val);
       }
       
@@ -86,16 +86,25 @@ void write_callback(Device *device, Param *param, const param_val_t val, void *p
       if(strcmp(param_name, "Power") == 0) {
         Serial.printf("Received value = %s for %s - %s\n", val.val.b? "true" : "false", device_name, param_name);
         toggleState_2 = val.val.b;
-        (toggleState_2 == false) ? off() : light();
+        (toggleState_2 == false) ? off() : start_white_light();
         param->updateAndReport(val);
       }
     }
     
 }
+int start_warm_light(){
+  light(150);
+  off();
+  return LOW;
 
+}
+void start_white_light(){
+  digitalWrite(RelayPin1, HIGH);
+  light(0);
+}
 // FastLED light function
 
-void light(){
+void light(int x){
   for(int i = 0; i < led_count; i++)
   {
     for(int j = 0; j < sections; j++){
@@ -103,7 +112,7 @@ void light(){
       
     }
     FastLED.show();
-    delay(200);
+    delay(x);
     
   }
 }
