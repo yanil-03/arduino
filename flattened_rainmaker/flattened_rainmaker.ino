@@ -2,37 +2,14 @@
 #include "RMaker.h"
 #include "WiFi.h"
 #include "WiFiProv.h"
-
 #include <FastLED.h>
 
-#define NUM_LEDS  16                      //total leds in athe strip
-#define LED_PIN   4                     //LED pin / gpio pin
-#define color CRGB::MistyRose//peru    // led color
+#define NUM_LEDS  198
+#define LED_PIN   4
+#define black CRGB::Black
+#define white CRGB::White
+int led_count = 33;
 CRGB leds[NUM_LEDS];
-
-
-
-// LED functions
-void light(int n)
-{
-  leds[n] = color;
-  FastLED.show();
-}
-
-
-void lightoff(int n)
-{
-  leds[n] = CRGB::Black;
-  FastLED.show();
-}
-
-void grp(int a,int b,int c,int d)
-{
-  light(a);
-  light(b);
-  light(c);
-  light(d);
-}
 
 
 
@@ -41,24 +18,24 @@ const char *service_name = "PROV_12345";
 const char *pop = "1234567";
 
 // define the Device Names
-char deviceName_1[] = "Switch1";
-char deviceName_2[] = "Switch2";
-char deviceName_3[] = "Switch3";
-char deviceName_4[] = "Switch4";
-char deviceName_5[] = "Switch5";
-char deviceName_6[] = "Switch6";
-char deviceName_7[] = "Switch7";
-char deviceName_8[] = "Switch8";
+char deviceName_1[] = "Warm light";
+char deviceName_2[] = "white light";
+// char deviceName_3[] = "Switch3";
+// char deviceName_4[] = "Switch4";
+// char deviceName_5[] = "Switch5";
+// char deviceName_6[] = "Switch6";
+// char deviceName_7[] = "Switch7";
+// char deviceName_8[] = "Switch8";
 
 // define the GPIO connected with Relays and switches
 static uint8_t RelayPin1 = 23;  //D23
 static uint8_t RelayPin2 = 22;  //D22
-static uint8_t RelayPin3 = 21;  //D21
-static uint8_t RelayPin4 = 19;  //D19
-static uint8_t RelayPin5 = 18;  //D18
-static uint8_t RelayPin6 = 5;   //D5
-static uint8_t RelayPin7 = 25;  //D25
-static uint8_t RelayPin8 = 26;  //D26
+// static uint8_t RelayPin3 = 21;  //D21
+// static uint8_t RelayPin4 = 19;  //D19
+// static uint8_t RelayPin5 = 18;  //D18
+// static uint8_t RelayPin6 = 5;   //D5
+// static uint8_t RelayPin7 = 25;  //D25
+// static uint8_t RelayPin8 = 26;  //D26
 
 static uint8_t wifiLed    = 2;   //D2
 static uint8_t gpio_reset = 0;
@@ -67,32 +44,32 @@ static uint8_t gpio_reset = 0;
 // Relay State
 bool toggleState_1 = LOW; //Define integer to remember the toggle state for relay 1
 bool toggleState_2 = LOW; //Define integer to remember the toggle state for relay 2
-bool toggleState_3 = LOW; //Define integer to remember the toggle state for relay 3
-bool toggleState_4 = LOW; //Define integer to remember the toggle state for relay 4
-bool toggleState_5 = LOW; //Define integer to remember the toggle state for relay 5
-bool toggleState_6 = LOW; //Define integer to remember the toggle state for relay 6
-bool toggleState_7 = LOW; //Define integer to remember the toggle state for relay 7
-bool toggleState_8 = LOW; //Define integer to remember the toggle state for relay 8
+// bool toggleState_3 = LOW; //Define integer to remember the toggle state for relay 3
+// bool toggleState_4 = LOW; //Define integer to remember the toggle state for relay 4
+// bool toggleState_5 = LOW; //Define integer to remember the toggle state for relay 5
+// bool toggleState_6 = LOW; //Define integer to remember the toggle state for relay 6
+// bool toggleState_7 = LOW; //Define integer to remember the toggle state for relay 7
+// bool toggleState_8 = LOW; //Define integer to remember the toggle state for relay 8
 
 // Switch State
 bool SwitchState_1 = LOW;
 bool SwitchState_2 = LOW;
-bool SwitchState_3 = LOW;
-bool SwitchState_4 = LOW;
-bool SwitchState_5 = LOW;
-bool SwitchState_6 = LOW;
-bool SwitchState_7 = LOW;
-bool SwitchState_8 = LOW;
+// bool SwitchState_3 = LOW;
+// bool SwitchState_4 = LOW;
+// bool SwitchState_5 = LOW;
+// bool SwitchState_6 = LOW;
+// bool SwitchState_7 = LOW;
+// bool SwitchState_8 = LOW;
 
 //The framework provides some standard device types like switch, lightbulb, fan, temperature sensor.
 static Switch my_switch1(deviceName_1, &RelayPin1);
 static Switch my_switch2(deviceName_2, &RelayPin2);
-static Switch my_switch3(deviceName_3, &RelayPin3);
-static Switch my_switch4(deviceName_4, &RelayPin4);
-static Switch my_switch5(deviceName_5, &RelayPin5);
-static Switch my_switch6(deviceName_6, &RelayPin6);
-static Switch my_switch7(deviceName_7, &RelayPin7);
-static Switch my_switch8(deviceName_8, &RelayPin8);
+// static Switch my_switch3(deviceName_3, &RelayPin3);
+// static Switch my_switch4(deviceName_4, &RelayPin4);
+// static Switch my_switch5(deviceName_5, &RelayPin5);
+// static Switch my_switch6(deviceName_6, &RelayPin6);
+// static Switch my_switch7(deviceName_7, &RelayPin7);
+// static Switch my_switch8(deviceName_8, &RelayPin8);
 
 void sysProvEvent(arduino_event_t *sys_event)
 {
@@ -121,6 +98,7 @@ void write_callback(Device *device, Param *param, const param_val_t val, void *p
     if(strcmp(device_name, deviceName_1) == 0) {
       
       Serial.printf("Lightbulb = %s\n", val.val.b? "true" : "false");
+    
       
       if(strcmp(param_name, "Power") == 0) {
           Serial.printf("Received value = %s for %s - %s\n", val.val.b? "true" : "false", device_name, param_name);
@@ -136,86 +114,46 @@ void write_callback(Device *device, Param *param, const param_val_t val, void *p
       if(strcmp(param_name, "Power") == 0) {
         Serial.printf("Received value = %s for %s - %s\n", val.val.b? "true" : "false", device_name, param_name);
         toggleState_2 = val.val.b;
-        (toggleState_2 == false) ? digitalWrite(RelayPin2, HIGH) : digitalWrite(RelayPin2, LOW);
+        (toggleState_2 == false) ? off(led_count) : light(led_count);
         param->updateAndReport(val);
       }
-  
-    } else if(strcmp(device_name, deviceName_3) == 0) {
-      
-      Serial.printf("Switch value = %s\n", val.val.b? "true" : "false");
+    }
+    
+}
 
-      if(strcmp(param_name, "Power") == 0) {
-        Serial.printf("Received value = %s for %s - %s\n", val.val.b? "true" : "false", device_name, param_name);
-        toggleState_3 = val.val.b;
-        (toggleState_3 == false) ? digitalWrite(RelayPin3, HIGH) : digitalWrite(RelayPin3, LOW);
-        param->updateAndReport(val);
-      }
-  
-    } else if(strcmp(device_name, deviceName_4) == 0) {
-      
-      Serial.printf("Switch value = %s\n", val.val.b? "true" : "false");
+void light(int x){
+  for(int i = x; i <= (led_count + x); i++)
+  {
+    leds[i] = white;
+    // leds[(NUM_LEDS/2)+i] = f;
+    FastLED.show();
+    delay(200);
+    // if(i == x)
+    // {
+    //   off(led_count);
+    // }
+  }
+}
 
-      if(strcmp(param_name, "Power") == 0) {
-        Serial.printf("Received value = %s for %s - %s\n", val.val.b? "true" : "false", device_name, param_name);
-        toggleState_4 = val.val.b;
-        (toggleState_4 == false) ? digitalWrite(RelayPin4, HIGH) : digitalWrite(RelayPin4, LOW);
-        param->updateAndReport(val);
-      } 
-       
-    } else if(strcmp(device_name, deviceName_5) == 0) {
-      
-      Serial.printf("Lightbulb = %s\n", val.val.b? "true" : "false");
-      
-      if(strcmp(param_name, "Power") == 0) {
-          Serial.printf("Received value = %s for %s - %s\n", val.val.b? "true" : "false", device_name, param_name);
-        toggleState_5 = val.val.b;
-        (toggleState_5 == false) ? digitalWrite(RelayPin5, HIGH) : digitalWrite(RelayPin5, LOW);
-        param->updateAndReport(val);
-      }
-      
-    } else if(strcmp(device_name, deviceName_6) == 0) {
-      
-      Serial.printf("Switch value = %s\n", val.val.b? "true" : "false");
-
-      if(strcmp(param_name, "Power") == 0) {
-        Serial.printf("Received value = %s for %s - %s\n", val.val.b? "true" : "false", device_name, param_name);
-        toggleState_6 = val.val.b;
-        (toggleState_6 == false) ? digitalWrite(RelayPin6, HIGH) : digitalWrite(RelayPin6, LOW);
-        param->updateAndReport(val);
-      }
-  
-    } else if(strcmp(device_name, deviceName_7) == 0) {
-      
-      Serial.printf("Switch value = %s\n", val.val.b? "true" : "false");
-
-      if(strcmp(param_name, "Power") == 0) {
-        Serial.printf("Received value = %s for %s - %s\n", val.val.b? "true" : "false", device_name, param_name);
-        toggleState_7 = val.val.b;
-        (toggleState_7 == false) ? digitalWrite(RelayPin7, HIGH) : digitalWrite(RelayPin7, LOW);
-        param->updateAndReport(val);
-      }
-  
-    } else if(strcmp(device_name, deviceName_8) == 0) {
-      
-      Serial.printf("Switch value = %s\n", val.val.b? "true" : "false");
-
-      if(strcmp(param_name, "Power") == 0) {
-        Serial.printf("Received value = %s for %s - %s\n", val.val.b? "true" : "false", device_name, param_name);
-        toggleState_8 = val.val.b;
-        (toggleState_8 == false) ? digitalWrite(RelayPin8, HIGH) : digitalWrite(RelayPin8, LOW);
-        param->updateAndReport(val);
-      }  
-    } 
+void off(int x){
+  for(int i = x; i <= (led_count + x); i++)
+  {
+    leds[i] = black;
+    // leds[(NUM_LEDS/2)+i] = f;
+    FastLED.show();
+    // delay(200);
+    
+    // leds[(NUM_LEDS/2)+i] = leds[i] = CRGB::Black;
+    // FastLED.show();
+    // delay(200);
+  }
 }
 
 
 void setup()
 {
-
-
     FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
-    FastLED.setBrightness(50);                                      //LED brightness
-    
+    FastLED.setBrightness(255);   
     
     uint32_t chipId = 0;
     
@@ -224,12 +162,12 @@ void setup()
     // Set the Relays GPIOs as output mode
     pinMode(RelayPin1, OUTPUT);
     pinMode(RelayPin2, OUTPUT);
-    pinMode(RelayPin3, OUTPUT);
-    pinMode(RelayPin4, OUTPUT);
-    pinMode(RelayPin5, OUTPUT);
-    pinMode(RelayPin6, OUTPUT);
-    pinMode(RelayPin7, OUTPUT);
-    pinMode(RelayPin8, OUTPUT);  
+    // pinMode(RelayPin3, OUTPUT);
+    // pinMode(RelayPin4, OUTPUT);
+    // pinMode(RelayPin5, OUTPUT);
+    // pinMode(RelayPin6, OUTPUT);
+    // pinMode(RelayPin7, OUTPUT);
+    // pinMode(RelayPin8, OUTPUT);  
     pinMode(wifiLed, OUTPUT);
     
 
@@ -238,36 +176,36 @@ void setup()
     // Write to the GPIOs the default state on booting
     digitalWrite(RelayPin1, !toggleState_1);
     digitalWrite(RelayPin2, !toggleState_2);
-    digitalWrite(RelayPin3, !toggleState_3);
-    digitalWrite(RelayPin4, !toggleState_4);
-    digitalWrite(RelayPin5, !toggleState_5);
-    digitalWrite(RelayPin6, !toggleState_6);
-    digitalWrite(RelayPin7, !toggleState_7);
-    digitalWrite(RelayPin8, !toggleState_8);
+    // digitalWrite(RelayPin3, !toggleState_3);
+    // digitalWrite(RelayPin4, !toggleState_4);
+    // digitalWrite(RelayPin5, !toggleState_5);
+    // digitalWrite(RelayPin6, !toggleState_6);
+    // digitalWrite(RelayPin7, !toggleState_7);
+    // digitalWrite(RelayPin8, !toggleState_8);
     digitalWrite(wifiLed, LOW);
 
     Node my_node;    
-    my_node = RMaker.initNode("ESP32_Relay_8");
+    my_node = RMaker.initNode("ESP32_Relay_2");
 
     //Standard switch device
     my_switch1.addCb(write_callback);
     my_switch2.addCb(write_callback);
-    my_switch3.addCb(write_callback);
-    my_switch4.addCb(write_callback);
-    my_switch5.addCb(write_callback);
-    my_switch6.addCb(write_callback);
-    my_switch7.addCb(write_callback);
-    my_switch8.addCb(write_callback);
+    // my_switch3.addCb(write_callback);
+    // my_switch4.addCb(write_callback);
+    // my_switch5.addCb(write_callback);
+    // my_switch6.addCb(write_callback);
+    // my_switch7.addCb(write_callback);
+    // my_switch8.addCb(write_callback);
 
     //Add switch device to the node   
     my_node.addDevice(my_switch1);
     my_node.addDevice(my_switch2);
-    my_node.addDevice(my_switch3);
-    my_node.addDevice(my_switch4);
-    my_node.addDevice(my_switch5);
-    my_node.addDevice(my_switch6);
-    my_node.addDevice(my_switch7);
-    my_node.addDevice(my_switch8);
+    // my_node.addDevice(my_switch3);
+    // my_node.addDevice(my_switch4);
+    // my_node.addDevice(my_switch5);
+    // my_node.addDevice(my_switch6);
+    // my_node.addDevice(my_switch7);
+    // my_node.addDevice(my_switch8);
 
     //This is optional 
     RMaker.enableOTA(OTA_USING_PARAMS);
@@ -297,12 +235,12 @@ void setup()
 
     my_switch1.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
     my_switch2.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
-    my_switch3.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
-    my_switch4.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
-    my_switch5.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
-    my_switch6.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
-    my_switch7.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
-    my_switch8.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
+    // my_switch3.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
+    // my_switch4.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
+    // my_switch5.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
+    // my_switch6.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
+    // my_switch7.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
+    // my_switch8.updateAndReportParam(ESP_RMAKER_DEF_POWER_NAME, false);
 }
 
 void loop()
@@ -339,5 +277,5 @@ void loop()
       digitalWrite(wifiLed, true);
     }
 
-
+     
 }
