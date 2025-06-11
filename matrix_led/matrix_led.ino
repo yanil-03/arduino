@@ -23,6 +23,10 @@ void setup() {
   FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
   
   FastLED.setBrightness(50);
+  light();
+  delay(300);
+  off();
+  
   
 }
 
@@ -32,7 +36,6 @@ void loop() {
   // FastLED.show();
   // delay(200);
   
-  light();
   
 }
 
@@ -49,16 +52,15 @@ void light(){
   }
 }
 
-void off(int x){
-  for(int i=0; i <= x; i++)
+void off(){
+  for(int i = 0; i < led_count; i++)
   {
-    leds[i] = black;
-    leds[(NUM_LEDS/sections)+i] = black;
+    for(int j = 0; j < sections; j++){
+      leds[j*led_count + i] = black;
+      
+    }
     FastLED.show();
     // delay(200);
     
-    // leds[(NUM_LEDS/2)+i] = leds[i] = CRGB::Black;
-    // FastLED.show();
-    // delay(200);
   }
 }
