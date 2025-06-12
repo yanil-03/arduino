@@ -2,7 +2,7 @@
 
 // #define NUM_LEDS  33
 #define sections 6
-#define led_count 6
+#define led_count 33
 #define NUM_LEDS  (sections * led_count)
 
 #define LED_PIN   4
@@ -21,8 +21,11 @@ CRGB leds[NUM_LEDS];
 
 void setup() {
   FastLED.addLeds<WS2812B, LED_PIN, GRB>(leds, NUM_LEDS);
-  
-  FastLED.setBrightness(50);
+  // limit my draw to 1A at 5v of power draw
+  // FastLED.setMaxPowerInVoltsAndMilliamps(5,4500); 
+  // FastLED.setMaxPowerInMilliWatts(60000);
+
+  FastLED.setBrightness(255);
   light();
   delay(300);
   off();
