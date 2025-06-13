@@ -1,0 +1,1 @@
+### Lights that turns on when alexa gets the phrase "illuminate" and similarly turns off with the phrase "de-illuminate"
